@@ -43,7 +43,7 @@ def get_data(url):
             except Exception as ex:
                 spec_value = spec.find('div', class_='value').text.strip()
 
-            # print(f'{spec_name}: {spec_value}')
+            print(f'{spec_name}: {spec_value}')
 
     except Exception as ex:
         print(ex)
