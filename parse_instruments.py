@@ -1,3 +1,5 @@
+import time
+
 import undetected_chromedriver as uc
 from bs4 import BeautifulSoup
 
@@ -5,8 +7,6 @@ UA = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) '\
                  'AppleWebKit/537.36 (KHTML, like Gecko) Chrome/107.0.0.0 Safari/537.36'
 
 URL = 'https://www.vseinstrumenti.ru/search_main.php?what=DF333DWYE'
-
-# URL = 'https://market.yandex.ru/search?cvredirect=2&text=DF333DWYE'
 
 options = uc.ChromeOptions()
 options.headless = True
