@@ -1,5 +1,3 @@
-import time
-
 import undetected_chromedriver as uc
 from bs4 import BeautifulSoup
 
@@ -18,7 +16,6 @@ def get_data(url):
 
     try:
         driver.get(url)
-        # time.sleep(2)
 
         soup = BeautifulSoup(driver.page_source, 'html.parser')
 

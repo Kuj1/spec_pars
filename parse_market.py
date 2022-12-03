@@ -1,5 +1,4 @@
 import os.path
-import time
 
 import undetected_chromedriver as uc
 import requests
