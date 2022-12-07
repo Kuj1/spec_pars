@@ -21,7 +21,7 @@ HEADERS = {
                  'AppleWebKit/537.36 (KHTML, like Gecko) Chrome/107.0.0.0 Safari/537.36'
 }
 
-API = 'dcd30132e329c316dcd003ebcb12f980'
+API = 'your_api_key'
 
 # URL = 'https://market.yandex.ru/search?text=DF333DWYE'
 
