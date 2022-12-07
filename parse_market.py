@@ -160,8 +160,16 @@ def get_data():
 
             items_soup = BeautifulSoup(driver.page_source, 'html.parser')
 
-            item = items_soup.find('main', attrs={'id': 'main'}).find('div', attrs={'data-test-id': 'virtuoso-item-list'}).find_all('div')[1].find('a').get('href').strip().split('?')[0]
-            item_url = f'https://market.yandex.ru{item}'
+            try:
+                item = items_soup.find('main', attrs={'id': 'main'}).\
+                    find('div', attrs={'data-test-id': 'virtuoso-item-list'}).\
+                    find('div', attrs={'data-index': "0"}).find('a').get('href').strip().split('?')[0]
+                item_url = f'https://market.yandex.ru{item}'
+            except Exception:
+                item = items_soup.find('main', attrs={'id': 'main'}). \
+                    find('div', attrs={'data-test-id': 'virtuoso-item-list'}). \
+                    find('div', attrs={'data-index': "1"}).find('a').get('href').strip().split('?')[0]
+                item_url = f'https://market.yandex.ru{item}'
             print(f'\t[+] Go to the item page: {item_url}')
 
             driver.get(item_url)
@@ -181,17 +189,20 @@ def get_data():
             specs = specs_soup.find('div', attrs={'data-auto': 'product-full-specs'}).find_all('div', class_='la3zd')
 
             specs_array = dict()
-            for each_section_spec in specs:
-                section_specs = each_section_spec.find('div', class_='_18fxQ').find_all('dl', class_='sZB0N')
-                for each_spec in section_specs:
-                    name_spec = each_spec.find('dt', class_='_1viar').find('div', class_='_2TxqA').find('span').\
-                        text.strip()
-                    try:
-                        value_spec = each_spec.find('div', class_='cia-vs cia-cs').find('dd').text.strip()
-                    except Exception:
-                        value_spec = each_spec.find('div', class_='_2Yndd').find('dd').text.strip()
+            try:
+                for each_section_spec in specs:
+                    section_specs = each_section_spec.find('div', class_='_18fxQ').find_all('dl', class_='sZB0N')
+                    for each_spec in section_specs:
+                        name_spec = each_spec.find('dt', class_='_1viar').find('div', class_='_2TxqA').find('span').\
+                            text.strip()
+                        try:
+                            value_spec = each_spec.find('div', class_='cia-vs cia-cs').find('dd').text.strip()
+                        except Exception:
+                            value_spec = each_spec.find('div', class_='_2Yndd').find('dd').text.strip()
 
-                    specs_array[f'{name_spec}'] = f'{value_spec}'
+                        specs_array[f'{name_spec}'] = f'{value_spec}'
+            except Exception:
+                specs_array['Характеристик'] = 'Нет'
 
             result_specs.append(
                 {
