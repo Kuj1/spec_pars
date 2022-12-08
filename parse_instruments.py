@@ -27,7 +27,7 @@ if not os.path.exists(data):
 
 def get_articles():
     articles = list()
-    with open(os.path.join(user_data, 'vse.instr_article.txt'), 'r') as doc:
+    with open(os.path.join(user_data, 'articles.txt'), 'r') as doc:
         for article in doc.readlines():
             mod_article = article.replace('\n', '').strip()
             articles.append(mod_article)

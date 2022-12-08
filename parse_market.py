@@ -24,8 +24,6 @@ HEADERS = {
 
 API = dotenv.get_variable(os.path.join(os.getcwd(), '.env'), 'API')
 
-# URL = 'https://market.yandex.ru/search?text=DF333DWYE'
-
 captcha_img = os.path.join(os.getcwd(), 'captcha_img')
 data = os.path.join(os.getcwd(), 'ya.market')
 user_data = os.path.join(os.getcwd(), 'user_data')
@@ -133,7 +131,7 @@ def bypass_captcha(driver, timeout):
 
 def get_articles():
     articles = list()
-    with open(os.path.join(user_data, 'ya.market_article.txt'), 'r') as doc:
+    with open(os.path.join(user_data, 'articles.txt'), 'r') as doc:
         for article in doc.readlines():
             mod_article = article.replace('\n', '').strip()
             articles.append(mod_article)
