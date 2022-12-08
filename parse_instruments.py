@@ -1,13 +1,10 @@
 import os
-import threading
 import time
-import re
 import json
 from datetime import datetime
 
 import undetected_chromedriver as uc
 from bs4 import BeautifulSoup
-from selenium.webdriver.chrome.service import Service
 
 UA = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) '\
                  'AppleWebKit/537.36 (KHTML, like Gecko) Chrome/107.0.0.0 Safari/537.36'
@@ -18,11 +15,6 @@ drivers_dict = dict()
 
 if not os.path.exists(data):
     os.mkdir(data)
-
-
-# options = uc.ChromeOptions()
-# options.headless = True
-# options.keep_alive = True
 
 
 def get_articles():
@@ -178,7 +170,8 @@ def get_data():
             driver.save_screenshot('ew.png')
             print(f'\t[-] {ex}')
 
-        driver.quit()
+        finally:
+            driver.quit()
 
     return result_specs
 
