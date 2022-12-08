@@ -5,7 +5,6 @@ import json
 from datetime import datetime
 
 import requests
-import dotenv
 from bs4 import BeautifulSoup
 from selenium import webdriver
 from selenium.webdriver import Keys
@@ -13,6 +12,7 @@ from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.by import By
+from dotenv import load_dotenv
 
 UA = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) '\
                  'AppleWebKit/537.36 (KHTML, like Gecko) Chrome/107.0.0.0 Safari/537.36'
@@ -21,8 +21,8 @@ HEADERS = {
     'user-agent':'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) '
                  'AppleWebKit/537.36 (KHTML, like Gecko) Chrome/107.0.0.0 Safari/537.36'
 }
-
-API = dotenv.get_variable(os.path.join(os.getcwd(), '.env'), 'API')
+load_dotenv()
+API = os.getenv('API')
 
 captcha_img = os.path.join(os.getcwd(), 'captcha_img')
 data = os.path.join(os.getcwd(), 'ya.market')
