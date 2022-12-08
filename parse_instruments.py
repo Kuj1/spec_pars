@@ -38,7 +38,7 @@ def get_data():
     result_specs = list()
     s = Service(f'{os.getcwd()}/chromedriver')
     options = webdriver.ChromeOptions()
-    options.add_experimental_option("excludeSwitches", ["enable-automation"])
+    options.add_experimental_option("excludeSwitches", ["enable-automation", "enable-logging"])
     options.add_experimental_option('useAutomationExtension', False)
     options.add_argument("--disable-blink-features")
     options.add_argument('--disable-blink-features=AutomationControlled')
@@ -193,6 +193,8 @@ def get_data():
                 driver.save_screenshot('ew.png')
                 print(f'\t[-] {ex}')
 
+        print(result_specs)
+
     return result_specs
 
     # with open(os.path.join(data, f'vse.instr_{date_time}.json'), 'a') as file:
@@ -202,6 +204,7 @@ def get_data():
 def main():
     date_time = datetime.now().strftime('%d.%m.%Y_%H:%M')
     result = get_data()
+    print(result)
 
     with open(os.path.join(data, f'vse.instr_{date_time}.json'), 'a') as file:
         json.dump(result, file, ensure_ascii=False, indent=4)
