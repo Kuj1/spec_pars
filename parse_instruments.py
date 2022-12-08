@@ -4,6 +4,7 @@ import json
 from datetime import datetime
 
 import undetected_chromedriver as uc
+from selenium import webdriver
 from bs4 import BeautifulSoup
 
 UA = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) '\
@@ -37,11 +38,13 @@ def get_data():
         url = 'https://www.vseinstrumenti.ru/search_main.php?what='
         mod_url = f'{url}{article}'
 
-        options = uc.ChromeOptions()
-        options.headless = True
-        options.keep_alive = True
+        options = webdriver.ChromeOptions()
+        options.add_argument('--disable-blink-features=AutomationControlled')
+        options.add_argument(f'--user-agent={UA}')
+        options.add_argument('start-maximized')
+        options.add_argument('--enable-javascript')
 
-        driver = uc.Chrome(options=options)
+        driver = webdriver.Chrome(options=options)
 
         with driver:
             try:
