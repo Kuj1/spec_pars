@@ -47,7 +47,7 @@ def get_data():
         with driver:
             try:
                 driver.get(mod_url)
-                time.sleep(10)
+                time.sleep(3)
 
                 soup = BeautifulSoup(driver.page_source, 'html.parser')
 
@@ -63,7 +63,7 @@ def get_data():
                 item_url = item.find('a').get('href')
                 if item_url.startswith('https'):
                     driver.get(item_url)
-                    time.sleep(60)
+                    time.sleep(3)
                     print(f'\t[+] Go to the item page: {item_url}')
                 else:
                     mod_item_url = f'https://www.vseinstrumenti.ru{item_url}'
@@ -177,33 +177,14 @@ def get_data():
 
     return result_specs
 
-    # with open(os.path.join(data, f'vse.instr_{date_time}.json'), 'a') as file:
-    #     json.dump(result_specs, file, ensure_ascii=False, indent=4)
-
 
 def main():
-    date_time = datetime.now().strftime('%d.%m.%Y_%H:%M')
+    date_time = datetime.now().strftime('%d-%m-%Y_%H-%M')
     result = get_data()
     print(result)
 
     with open(os.path.join(data, f'vse.instr_{date_time}.json'), 'a') as file:
         json.dump(result, file, ensure_ascii=False, indent=4)
-# def get_cookies():
-#     options = webdriver.ChromeOptions()
-#     options.add_argument('--disable-blink-features=AutomationControlled')
-#     options.add_argument(f'--user-agent={UA}')
-#     options.add_argument('start-maximized')
-#     options.add_argument('--enable-javascript')
-#
-#     driver = webdriver.Chrome(options=options)
-#
-#     driver.get('https://spb.vseinstrumenti.ru/search_main.php?what=DDF485RAJ')
-#     for cook in pickle.load(open('cookies', 'rb')):
-#         driver.add_cookie(cook)
-#     # pickle.dump(driver.get_cookies(), open('cookies', 'wb'))
-#     time.sleep(3)
-#
-#     driver.get('https://spb.vseinstrumenti.ru/instrument/shurupoverty/akkumulyatornye-dreli/bezudarnye/makita/ddf485raj/')
 
 
 if __name__ == '__main__':
