@@ -7,9 +7,6 @@ import pickle
 import undetected_chromedriver as uc
 from selenium import webdriver
 from bs4 import BeautifulSoup
-from selenium.webdriver.chrome.service import Service
-from selenium_stealth import stealth
-from undetected_chromedriver._compat import ChromeDriverManager
 
 UA = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) '\
                  'AppleWebKit/537.36 (KHTML, like Gecko) Chrome/107.0.0.0 Safari/537.36'
@@ -36,38 +33,21 @@ def get_data():
     articles = get_articles()
 
     result_specs = list()
-    s = Service(f'{os.getcwd()}/chromedriver')
-    options = webdriver.ChromeOptions()
-    options.add_experimental_option("excludeSwitches", ["enable-automation", "enable-logging"])
-    options.add_experimental_option('useAutomationExtension', False)
-    options.add_argument("--disable-blink-features")
-    options.add_argument('--disable-blink-features=AutomationControlled')
-    options.add_argument(f'--user-agent={UA}')
-    options.add_argument('start-maximized')
-    options.add_argument('--enable-javascript')
 
     for article in articles:
         print(f'[+] Article: {article}')
-        url = 'https://www.vseinstrumenti.ru/search_main.php?what='
+        url = 'https://spb.vseinstrumenti.ru/search_main.php?what='
         mod_url = f'{url}{article}'
 
-        driver = webdriver.Chrome(options=options, service=s)
-        stealth(driver,
-                languages=["en-US", "en"],
-                vendor="Google Inc.",
-                platform="Win32",
-                webgl_vendor="Intel Inc.",
-                renderer="Intel Iris OpenGL Engine",
-                fix_hairline=True,
-                )
+        options = uc.ChromeOptions()
+        # options.headless = True
 
-        driver.execute_script("Object.defineProperty(navigator, 'webdriver', {get: () => undefined})")
-        driver.execute_cdp_cmd('Network.setUserAgentOverride', {
-            "userAgent": 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/83.0.4103.53 Safari/537.36'})
+        driver = uc.Chrome(options=options)
 
         with driver:
             try:
                 driver.get(mod_url)
+                time.sleep(10)
 
                 soup = BeautifulSoup(driver.page_source, 'html.parser')
 
@@ -83,7 +63,7 @@ def get_data():
                 item_url = item.find('a').get('href')
                 if item_url.startswith('https'):
                     driver.get(item_url)
-                    time.sleep(5)
+                    time.sleep(60)
                     print(f'\t[+] Go to the item page: {item_url}')
                 else:
                     mod_item_url = f'https://www.vseinstrumenti.ru{item_url}'
