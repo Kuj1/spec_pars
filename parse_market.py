@@ -5,6 +5,7 @@ import json
 from datetime import datetime
 
 import requests
+import dotenv
 from bs4 import BeautifulSoup
 from selenium import webdriver
 from selenium.webdriver import Keys
@@ -21,7 +22,7 @@ HEADERS = {
                  'AppleWebKit/537.36 (KHTML, like Gecko) Chrome/107.0.0.0 Safari/537.36'
 }
 
-API = 'your_api_key'
+API = dotenv.get_variable(os.path.join(os.getcwd(), '.env'), 'API')
 
 # URL = 'https://market.yandex.ru/search?text=DF333DWYE'
 
