@@ -173,15 +173,12 @@ def get_data():
                 driver.save_screenshot('ew.png')
                 print(f'\t[-] {ex}')
 
-        print(result_specs)
-
     return result_specs
 
 
 def main():
     date_time = datetime.now().strftime('%d-%m-%Y_%H-%M')
     result = get_data()
-    print(result)
 
     with open(os.path.join(data, f'vse.instr_{date_time}.json'), 'a') as file:
         json.dump(result, file, ensure_ascii=False, indent=4)
