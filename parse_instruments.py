@@ -37,7 +37,6 @@ def get_articles():
 
 def get_data():
     articles = get_articles()
-    date_time = datetime.now().strftime('%d.%m.%Y_%H:%M')
 
     result_specs = list()
     # s = Service(f'{os.getcwd()}/chromedriver')
@@ -179,16 +178,20 @@ def get_data():
             driver.save_screenshot('ew.png')
             print(f'\t[-] {ex}')
 
-        finally:
-            driver.close()
-            driver.quit()
+        driver.quit()
 
-    with open(os.path.join(data, f'vse.instr_{date_time}.json'), 'a') as file:
-        json.dump(result_specs, file, ensure_ascii=False, indent=4)
+    return result_specs
+
+    # with open(os.path.join(data, f'vse.instr_{date_time}.json'), 'a') as file:
+    #     json.dump(result_specs, file, ensure_ascii=False, indent=4)
 
 
 def main():
-    get_data()
+    date_time = datetime.now().strftime('%d.%m.%Y_%H:%M')
+    result = get_data()
+
+    with open(os.path.join(data, f'vse.instr_{date_time}.json'), 'a') as file:
+        json.dump(result, file, ensure_ascii=False, indent=4)
 
 
 if __name__ == '__main__':
