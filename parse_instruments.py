@@ -1,11 +1,8 @@
 import os
-import time
 import json
 from datetime import datetime
-import pickle
 
 import undetected_chromedriver as uc
-from selenium import webdriver
 from bs4 import BeautifulSoup
 
 UA = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) '\
@@ -40,14 +37,13 @@ def get_data():
         mod_url = f'{url}{article}'
 
         options = uc.ChromeOptions()
-        # options.headless = True
+        options.headless = True
 
         driver = uc.Chrome(options=options)
 
         with driver:
             try:
                 driver.get(mod_url)
-                time.sleep(3)
 
                 soup = BeautifulSoup(driver.page_source, 'html.parser')
 
@@ -63,12 +59,10 @@ def get_data():
                 item_url = item.find('a').get('href')
                 if item_url.startswith('https'):
                     driver.get(item_url)
-                    time.sleep(3)
                     print(f'\t[+] Go to the item page: {item_url}')
                 else:
                     mod_item_url = f'https://www.vseinstrumenti.ru{item_url}'
                     driver.get(mod_item_url)
-                    time.sleep(2)
                     print(f'\t[+] Go to the item page: {mod_item_url}')
 
                 soup_image = BeautifulSoup(driver.page_source, 'html.parser')

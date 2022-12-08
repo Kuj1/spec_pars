@@ -141,7 +141,7 @@ def get_articles():
 
 def get_data():
     articles = get_articles()
-    date_time = datetime.now().strftime('%d.%m.%Y_%H:%M')
+    date_time = datetime.now().strftime('%d-%m-%Y_%H-%M')
 
     result_specs = list()
     for article in articles:
