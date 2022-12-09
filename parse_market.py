@@ -37,6 +37,7 @@ if not os.path.exists(data):
 
 options = webdriver.ChromeOptions()
 options.add_argument('--disable-blink-features=AutomationControlled')
+options.add_experimental_option('excludeSwitches', ['enable-logging'])
 options.add_argument(f'--user-agent={UA}')
 options.add_argument('start-maximized')
 options.add_argument('--headless')
@@ -233,7 +234,7 @@ def main():
     date_time = datetime.now().strftime('%d-%m-%Y_%H-%M')
     result = get_data()
 
-    with open(os.path.join(data, f'ya.market_{date_time}.json'), 'a', encoding='utf8') as file:
+    with open(os.path.join(data, f'ya_market_{date_time}.json'), 'a', encoding='utf-8') as file:
         json.dump(result, file, ensure_ascii=False, indent=4)
 
     with open(os.path.join(data, f'ya.market_{date_time}.txt'), 'a') as file:

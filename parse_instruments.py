@@ -204,7 +204,7 @@ def main():
     date_time = datetime.now().strftime('%d-%m-%Y_%H-%M')
     result = get_data()
 
-    with open(os.path.join(data, f'vse.instr_{date_time}.json'), 'a', encoding='utf8') as file:
+    with open(os.path.join(data, f'vse_instr_{date_time}.json'), 'a', encoding='utf-8') as file:
         json.dump(result, file, ensure_ascii=False, indent=4)
 
     with open(os.path.join(data, f'vse.instr_{date_time}.txt'), 'a') as file:
