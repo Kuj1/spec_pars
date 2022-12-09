@@ -145,7 +145,7 @@ def get_data():
 
     result_specs = list()
     for article in articles:
-        print(f'[+] Article: {article}')
+        print(f'\n[+] Article: {article}')
         url = 'https://market.yandex.ru/search?text='
         mod_url = f'{url}{article}'
 
@@ -156,18 +156,19 @@ def get_data():
         try:
             driver.get(mod_url)
             bypass_captcha(driver=driver, timeout=timeout)
+            time.sleep(3)
 
             items_soup = BeautifulSoup(driver.page_source, 'html.parser')
 
             try:
                 item = items_soup.find('main', attrs={'id': 'main'}).\
                     find('div', attrs={'data-test-id': 'virtuoso-item-list'}).\
-                    find('div', attrs={'data-index': "0"}).find('a').get('href').strip().split('?')[0]
+                    find('div', attrs={'data-index': "0"}).find('h3', attrs={'data-zone-name': 'title'}).find('a').get('href').strip().split('?')[0]
                 item_url = f'https://market.yandex.ru{item}'
             except Exception:
                 item = items_soup.find('main', attrs={'id': 'main'}). \
                     find('div', attrs={'data-test-id': 'virtuoso-item-list'}). \
-                    find('div', attrs={'data-index': "1"}).find('a').get('href').strip().split('?')[0]
+                    find('div', attrs={'data-index': "1"}).find('h3', attrs={'data-zone-name': 'title'}).find('a').get('href').strip().split('?')[0]
                 item_url = f'https://market.yandex.ru{item}'
             print(f'\t[+] Go to the item page: {item_url}')
 
@@ -192,10 +193,10 @@ def get_data():
 
             specs_soup = BeautifulSoup(driver.page_source, 'html.parser')
 
-            specs = specs_soup.find('div', attrs={'data-auto': 'product-full-specs'}).find_all('div', class_='la3zd')
-
             specs_array = dict()
             try:
+                specs = specs_soup.find('div', attrs={'data-auto': 'product-full-specs'}).\
+                    find_all('div', class_='la3zd')
                 for each_section_spec in specs:
                     section_specs = each_section_spec.find('div', class_='_18fxQ').find_all('dl', class_='sZB0N')
                     for each_spec in section_specs:
