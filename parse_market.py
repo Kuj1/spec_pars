@@ -238,7 +238,7 @@ def main():
     with open(os.path.join(data, f'ya_market_{date_time}.json'), 'a', encoding='utf-8') as file:
         json.dump(result, file, ensure_ascii=False, indent=4)
 
-    with open(os.path.join(data, f'ya.market_{date_time}.txt'), 'a') as file:
+    with open(os.path.join(data, f'ya.market_{date_time}.txt'), 'a', encoding='utf-8') as file:
         for i in result:
             file.write(f'{i}\n')
 
