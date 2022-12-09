@@ -1,5 +1,6 @@
 import os
 import json
+import time
 from datetime import datetime
 
 import undetected_chromedriver as uc
@@ -61,11 +62,17 @@ def get_data():
                     driver.get(item_url)
                     print(f'\t[+] Go to the item page: {item_url}')
                 else:
-                    mod_item_url = f'https://www.vseinstrumenti.ru{item_url}'
+                    mod_item_url = f'https://spb.vseinstrumenti.ru{item_url}'
                     driver.get(mod_item_url)
+                    time.sleep(2)
                     print(f'\t[+] Go to the item page: {mod_item_url}')
 
                 soup_image = BeautifulSoup(driver.page_source, 'html.parser')
+
+                try:
+                    item_name = soup_image.find('div', class_='content-heading').find('h1').text.strip()
+                except Exception:
+                    item_name = 'Нет названия'
 
                 mid_specs_array = dict()
 
@@ -85,18 +92,6 @@ def get_data():
                 except Exception:
                     mid_specs_array['Характеристик'] = 'Нет'
 
-                mid_advantages_array = list()
-
-                try:
-                    advantages_item = soup_image.find('div', class_='advantages spoiler').\
-                        find('div', class_='content-block').find('ul').find_all('li')
-
-                    for i in advantages_item:
-                        advantage = i.text.strip()
-                        mid_advantages_array.append(advantage)
-                except Exception:
-                    mid_advantages_array.append('Нет преимуществ')
-
                 mid_description_array = list()
 
                 try:
@@ -111,7 +106,7 @@ def get_data():
                 try:
                     brand_item = soup_image.find('div', class_='brand').find('img').get('alt')
                 except Exception:
-                    brand_item = 'Нет брэнда'
+                    brand_item = 'Нет бренда'
 
                 try:
                     homeland = soup_image.find_all('ul', class_='unordered-list')[0].find_all('li')[0].\
@@ -148,23 +143,58 @@ def get_data():
                 except Exception:
                     mid_wrapper_array.append('Нет информации об упаковке')
 
+                mid_advantages_array = list()
+
+                try:
+                    mob_item_url = f'https://m.vseinstrumenti.ru{item_url}'
+                    driver.get(mob_item_url)
+                    time.sleep(1)
+
+                    soup_mob_image = BeautifulSoup(driver.page_source, 'html.parser')
+                except Exception:
+                    print(f'\t[-] {ex}')
+
+                if homeland == 'Нет родины':
+                    try:
+                        homeland = soup_mob_image.find('div', class_='good-description').\
+                            find('ul', class_='countryList').find_all('li')[0].text.split('—')[0].strip()
+                    except Exception:
+                        homeland = 'Нет родины'
+
+                if manufacturer == 'Нет производителя':
+                    try:
+                        manufacturer = soup_mob_image.find('div', class_='good-description').\
+                            find('ul', class_='countryList').find_all('li')[1].text.split('—')[0].strip()
+                    except Exception:
+                        manufacturer = 'Нет производителя'
+
+                try:
+                    advantages = soup_mob_image.find('div', class_='good-description').\
+                        find('div', class_='text-block').find_all('div')[1].find('ul').find_all('li')
+
+                    for i in advantages:
+                        advantage = i.text.strip()
+                        mid_advantages_array.append(advantage)
+                except Exception:
+                    mid_advantages_array.append('Нет преимуществ')
+
                 result_specs.append(
                     {
                         f'{article}': {
-                            'Brand': brand_item,
-                            'Homeland': homeland,
-                            'Manufacturer': manufacturer,
-                            'Equipment': mid_equipment_array,
-                            'WrapperInformation': mid_wrapper_array,
-                            'Description': mid_description_array,
-                            'Specifications': mid_specs_array,
-                            'Advantages': mid_advantages_array,
+                            'Название': item_name,
+                            'Бренд': brand_item,
+                            'Родина': homeland,
+                            'Производство': manufacturer,
+                            'Комплектация': mid_equipment_array,
+                            'ИнформацияОбУпаковке': mid_wrapper_array,
+                            'Описание': mid_description_array,
+                            'Характеристики': mid_specs_array,
+                            'Преимущества': mid_advantages_array,
                         }
                     }
                 )
 
             except Exception as ex:
-                driver.save_screenshot('ew.png')
                 print(f'\t[-] {ex}')
 
     return result_specs
@@ -174,8 +204,12 @@ def main():
     date_time = datetime.now().strftime('%d-%m-%Y_%H-%M')
     result = get_data()
 
-    with open(os.path.join(data, f'vse.instr_{date_time}.json'), 'a') as file:
+    with open(os.path.join(data, f'vse.instr_{date_time}.json'), 'a', encoding='utf8') as file:
         json.dump(result, file, ensure_ascii=False, indent=4)
+
+    with open(os.path.join(data, f'vse.instr_{date_time}.txt'), 'a') as file:
+        for i in result:
+            file.write(f'{i}\n')
 
 
 if __name__ == '__main__':

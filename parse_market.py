@@ -107,7 +107,7 @@ def bypass_captcha(driver, timeout):
 
                 src_img = soup.find('div', class_='AdvancedCaptcha'). \
                     find('div', class_='AdvancedCaptcha-View').find('img', class_='AdvancedCaptcha-Image').get('src')
-                print(f'[+] Captcha image: {src_img}')
+                print(f'\t\t[+] Captcha image: {src_img}')
                 img_id = src_img.split('/')[-1]
 
                 get_photo(url=src_img, id_img=img_id)
@@ -117,16 +117,16 @@ def bypass_captcha(driver, timeout):
                     until(EC.presence_of_element_located((By.CLASS_NAME, 'Textinput-Control')))
                 input_elem(enter_captcha, text_captcha_result, Keys.ENTER)
 
-                print('\t[+] TextCaptcha solved')
+                print('\t\t[+] TextCaptcha solved')
                 print(f'\t\t[+] Answer: {text_captcha_result}')
             else:
                 pass
 
         except Exception as ex:
-            print('\t[+] No TextCaptcha')
+            print('\t\t[+] No TextCaptcha')
 
     except Exception as ex:
-        print('\t[+] No SmartCaptcha')
+        print('\t\t[+] No SmartCaptcha')
 
 
 def get_articles():
@@ -141,7 +141,6 @@ def get_articles():
 
 def get_data():
     articles = get_articles()
-    date_time = datetime.now().strftime('%d-%m-%Y_%H-%M')
 
     result_specs = list()
     for article in articles:
@@ -175,6 +174,13 @@ def get_data():
             bypass_captcha(driver=driver, timeout=timeout)
 
             spec_soup = BeautifulSoup(driver.page_source, 'html.parser')
+
+            try:
+                item_name = spec_soup.find('div', attrs={'data-zone-name': 'productCardTitle'}).\
+                    find('h1', attrs={'data-baobab-name': '$name'}).text.strip()
+            except Exception:
+                item_name = 'Нет названия'
+
             spec = spec_soup.find('a', string=re.compile('Характеристики')).get('href').strip()
             spec_url = f'https://market.yandex.ru{spec}'
             print(f"\t[+] Go to the item specs page: {spec_url}")
@@ -205,23 +211,34 @@ def get_data():
 
             result_specs.append(
                 {
-                    f'{article}': specs_array
+                    f'{article}': {
+                        'Название': item_name,
+                        'Характеристики': specs_array
+                    }
                 }
             )
 
         except Exception as ex:
             print(f'\t[-] {ex}')
+            print(f'\t[-] Maybe this item don\'t exist')
 
         finally:
             driver.close()
             driver.quit()
 
-    with open(os.path.join(data, f'ya.market_{date_time}.json'), 'a') as file:
-        json.dump(result_specs, file, ensure_ascii=False, indent=4)
+    return result_specs
 
 
 def main():
-    get_data()
+    date_time = datetime.now().strftime('%d-%m-%Y_%H-%M')
+    result = get_data()
+
+    with open(os.path.join(data, f'ya.market_{date_time}.json'), 'a', encoding='utf8') as file:
+        json.dump(result, file, ensure_ascii=False, indent=4)
+
+    with open(os.path.join(data, f'ya.market_{date_time}.txt'), 'a') as file:
+        for i in result:
+            file.write(f'{i}\n')
 
 
 if __name__ == '__main__':
