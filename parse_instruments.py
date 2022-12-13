@@ -19,7 +19,7 @@ if not os.path.exists(data):
 
 def get_articles():
     articles = list()
-    with open(os.path.join(user_data, 'articles.txt'), 'r') as doc:
+    with open(os.path.join(user_data, 'articles.txt'), 'r', encoding='utf-8') as doc:
         for article in doc.readlines():
             mod_article = article.replace('\n', '').strip()
             articles.append(mod_article)
@@ -38,7 +38,7 @@ def get_data():
         mod_url = f'{url}{article}'
 
         options = uc.ChromeOptions()
-        # options.headless = True
+        options.headless = True
 
         driver = uc.Chrome(options=options)
 
@@ -47,8 +47,6 @@ def get_data():
                 driver.get(mod_url)
 
                 soup = BeautifulSoup(driver.page_source, 'html.parser')
-
-                # search_page = soup.find('div', class_='gfDJWv').find_all('div', attrs={'data-qa': "products-tile-horizontal"})[0]
 
                 try:
                     item_url = soup.find('div', class_='gfDJWv').\
@@ -207,7 +205,7 @@ def main():
     with open(os.path.join(data, f'vse_instr_{date_time}.json'), 'a', encoding='utf-8') as file:
         json.dump(result, file, ensure_ascii=False, indent=4, )
 
-    with open(os.path.join(data, f'vse.instr_{date_time}.txt'), 'a') as file:
+    with open(os.path.join(data, f'vse.instr_{date_time}.txt'), 'a', encoding='utf-8') as file:
         for i in result:
             file.write(f'{i}\n')
 

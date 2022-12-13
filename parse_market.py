@@ -132,7 +132,7 @@ def bypass_captcha(driver, timeout):
 
 def get_articles():
     articles = list()
-    with open(os.path.join(user_data, 'articles.txt'), 'r') as doc:
+    with open(os.path.join(user_data, 'articles.txt'), 'r', encoding='utf-8') as doc:
         for article in doc.readlines():
             mod_article = article.replace('\n', '').strip()
             articles.append(mod_article)
