@@ -38,7 +38,7 @@ def get_data():
         mod_url = f'{url}{article}'
 
         options = uc.ChromeOptions()
-        options.headless = True
+        # options.headless = True
 
         driver = uc.Chrome(options=options)
 
@@ -48,16 +48,15 @@ def get_data():
 
                 soup = BeautifulSoup(driver.page_source, 'html.parser')
 
-                search_page = soup.find('div', class_='search-page').find('div', attrs={'data-behavior': "product-listing"})
+                # search_page = soup.find('div', class_='gfDJWv').find_all('div', attrs={'data-qa': "products-tile-horizontal"})[0]
 
                 try:
-                    item = search_page.find('div', attrs={'data-position': '1'}).find('div', class_='title')
+                    item_url = soup.find('div', class_='gfDJWv').\
+                        find_all('div', attrs={'data-qa': "products-tile-horizontal"})[0].\
+                        find('div', class_='elqw79').find_all('a')[0].get('href')
                 except Exception:
-                    item = search_page.\
-                        find('div', attrs={'data-position': '1', 'class': 'product-tile grid-item -not-available'}).\
-                        find('div', class_='title')
+                    print(f'\t[-] {article} Not found')
 
-                item_url = item.find('a').get('href')
                 if item_url.startswith('https'):
                     driver.get(item_url)
                     print(f'\t[+] Go to the item page: {item_url}')
@@ -146,12 +145,13 @@ def get_data():
                 mid_advantages_array = list()
 
                 try:
-                    mob_item_url = f'https://m.vseinstrumenti.ru{item_url}'
+                    mob_item_url = f'https://m.vseinstrumenti.ru/' \
+                                   f'{item_url.replace("https://www.vseinstrumenti.ru/", "").strip()}'
                     driver.get(mob_item_url)
                     time.sleep(1)
 
                     soup_mob_image = BeautifulSoup(driver.page_source, 'html.parser')
-                except Exception:
+                except Exception as ex:
                     print(f'\t[-] {ex}')
 
                 if homeland == 'Нет родины':
@@ -205,9 +205,9 @@ def main():
     result = get_data()
 
     with open(os.path.join(data, f'vse_instr_{date_time}.json'), 'a', encoding='utf-8') as file:
-        json.dump(result, file, ensure_ascii=False, indent=4)
+        json.dump(result, file, ensure_ascii=False, indent=4, )
 
-    with open(os.path.join(data, f'vse.instr_{date_time}.txt'), 'a', encoding='utf-8') as file:
+    with open(os.path.join(data, f'vse.instr_{date_time}.txt'), 'a') as file:
         for i in result:
             file.write(f'{i}\n')
 
